@@ -19,7 +19,7 @@ sudo apt-get install bash
 Clone the repository to your local machine:
 
 ```
-git clone https://github.com/TopChainBoy/RoleBasedDirectoryAccessControl.git
+git clone https://github.com/VladBlackbird/RoleBasedDirectoryAccessControl.git
 ```
 
 Navigate to the project directory:
@@ -49,7 +49,7 @@ The script will ask you to enter roles, directories for each role, and whether y
 
 ## Authors
 
-* **TopChainBoy** - *Initial work* - [TopChainBoy](https://github.com/TopChainBoy)
+* **VladBlackbird** - *Initial work* - [VladBlackbird](https://github.com/VladBlackbird)
 
 ## License
 
