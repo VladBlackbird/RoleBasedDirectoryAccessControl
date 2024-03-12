@@ -1,6 +1,6 @@
 # Role-Based Directory Access Control Script
 
-This script is designed to manage access control to directories based on roles. It allows you to define roles and their associated directories, create these directories, create groups for each role, and set directory permissions for each role.
+This script is designed to manage access control to directories based on roles. It allows you to define roles and their associated directories, create these directories, delete directories, create groups for each role, set directory permissions for each role, and modify permissions of any directories.
 
 ## Getting Started
 
@@ -41,7 +41,7 @@ The script can be run with the following command:
 ./roleBasedDirectoryAccessControl.sh
 ```
 
-The script will ask you to enter roles, directories for each role, and whether you want to create these directories. It will then create groups for each role and set directory permissions for each role.
+The script will ask you to enter roles, directories for each role, whether you want to create these directories, whether you want to delete any directories, and whether you want to modify permissions of any directories. It will then create groups for each role and set directory permissions for each role.
 
 ## Built With
 
