@@ -62,3 +62,20 @@ for role in "${!role_dirs[@]}"; do
     fi
   done
 done
+
+# Ask user if they want to modify permissions of any directories
+echo "Do you want to modify permissions of any directories? (y/n)"
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  echo "Enter directories to modify permissions, separated by space:"
+  read -ra dirs
+  for dir in "${dirs[@]}"; do
+    if [ -d "$dir" ]; then
+      echo "Enter new permissions for $dir (e.g. 770):"
+      read -r perms
+      sudo chmod "$perms" "$dir"
+    else
+      echo "Directory $dir does not exist."
+    fi
+  done
+fi
