@@ -21,8 +21,27 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
   for role in "${!role_dirs[@]}"; do
     IFS=' ' read -ra dirs <<< "${role_dirs[$role]}"
     for dir in "${dirs[@]}"; do
-      sudo mkdir -p "$dir"
+      if [ ! -d "$dir" ]; then
+        sudo mkdir -p "$dir"
+      else
+        echo "Directory $dir already exists."
+      fi
     done
+  done
+fi
+
+# Ask user if they want to delete any directories
+echo "Do you want to delete any directories? (y/n)"
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  echo "Enter directories to delete, separated by space:"
+  read -ra dirs
+  for dir in "${dirs[@]}"; do
+    if [ -d "$dir" ]; then
+      sudo rm -r "$dir"
+    else
+      echo "Directory $dir does not exist."
+    fi
   done
 fi
 
@@ -37,8 +56,9 @@ done
 for role in "${!role_dirs[@]}"; do
   IFS=' ' read -ra dirs <<< "${role_dirs[$role]}"
   for dir in "${dirs[@]}"; do
-    sudo chown :"$role" "$dir"
-    sudo chmod 770 "$dir"
+    if [ -d "$dir" ]; then
+      sudo chown :"$role" "$dir"
+      sudo chmod 770 "$dir"
+    fi
   done
 done
-
