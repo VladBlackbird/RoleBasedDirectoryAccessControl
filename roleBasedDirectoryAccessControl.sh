@@ -79,3 +79,21 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
     fi
   done
 fi
+
+# Add feature to allow the user to add users to the groups
+# Ask user if they want to add users to the groups
+echo "Do you want to add users to the groups? (y/n)"
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  for role in "${roles[@]}"; do
+    echo "Enter users to add to the $role group, separated by space:"
+    read -ra users
+    for user in "${users[@]}"; do
+      if id -u "$user" >/dev/null 2>&1; then
+        sudo usermod -a -G "$role" "$user"
+      else
+        echo "User $user does not exist."
+      fi
+    done
+  done
+fi
