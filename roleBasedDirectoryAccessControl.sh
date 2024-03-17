@@ -6,12 +6,18 @@ BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo "Enter roles, separated by space:"
 read -ra roles
 
-# Ask user for directories for each role
+# Ask user for directories and their permissions for each role
 declare -A role_dirs
+declare -A dir_perms
 for role in "${roles[@]}"; do
   echo "Enter directories for $role, separated by space:"
   read -ra dirs
   role_dirs["$role"]="${dirs[@]}"
+  for dir in "${dirs[@]}"; do
+    echo "Enter permissions for $dir (e.g. 770):"
+    read -r perms
+    dir_perms["$dir"]="$perms"
+  done
 done
 
 # Ask user if they want to create the directories
@@ -58,7 +64,7 @@ for role in "${!role_dirs[@]}"; do
   for dir in "${dirs[@]}"; do
     if [ -d "$dir" ]; then
       sudo chown :"$role" "$dir"
-      sudo chmod 770 "$dir"
+      sudo chmod "${dir_perms[$dir]}" "$dir"
     fi
   done
 done
