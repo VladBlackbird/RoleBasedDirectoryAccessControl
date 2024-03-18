@@ -13,10 +13,10 @@ for role in "${roles[@]}"; do
   echo "Enter directories for $role, separated by space:"
   read -ra dirs
   role_dirs["$role"]="${dirs[@]}"
-  for dir in "${dirs[@]}"; do
-    echo "Enter permissions for $dir (e.g. 770):"
-    read -r perms
-    dir_perms["$dir"]="$perms"
+  echo "Enter permissions for each directory (in the same order), separated by space:"
+  read -ra perms
+  for index in "${!dirs[@]}"; do
+    dir_perms["${dirs[$index]}"]="${perms[$index]}"
   done
 done
 
