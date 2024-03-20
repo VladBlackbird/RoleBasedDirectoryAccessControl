@@ -105,3 +105,20 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
     done
   done
 fi
+
+# Remove users from the groups
+echo "Do you want to remove users from the groups? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  for role in "${roles[@]}"; do
+    echo "Enter users to remove from the $role group, separated by space:" | tee -a $LOGFILE
+    read -ra users
+    for user in "${users[@]}"; do
+      if id -u "$user" >/dev/null 2>&1; then
+        sudo gpasswd -d "$user" "$role" | tee -a $LOGFILE
+      else
+        echo "User $user does not exist." | tee -a $LOGFILE
+      fi
+    done
+  done
+fi
