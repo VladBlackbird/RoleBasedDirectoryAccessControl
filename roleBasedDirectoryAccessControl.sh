@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Check if the user has root privileges
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root or use sudo to execute this script." | tee -a $LOGFILE
+  exit
+fi
+
 LOGFILE="/var/log/my_script.log"
 
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
