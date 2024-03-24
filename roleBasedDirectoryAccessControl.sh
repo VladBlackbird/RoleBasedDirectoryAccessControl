@@ -95,6 +95,7 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
 fi
 
 # Add feature to allow the user to add users to the groups
+
 # Ask user if they want to add users to the groups
 echo "Do you want to add users to the groups? (y/n)" | tee -a $LOGFILE
 read -r answer
@@ -128,3 +129,4 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
     done
   done
 fi
+
