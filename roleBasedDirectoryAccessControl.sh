@@ -10,6 +10,30 @@ LOGFILE="/var/log/my_script.log"
 
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+function usage() {
+  echo "Usage: $0 [OPTIONS]"
+  echo "This script manages roles, directories, and permissions."
+  echo
+  echo "Options:"
+  echo "  --help, -h    Show this help message and exit"
+  echo
+  echo "Examples:"
+  echo "  $0"
+  exit 1
+}
+
+for i in "$@"; do
+  case $i in
+    -h|--help)
+      usage
+      shift
+      ;;
+    *)
+      # unknown option
+      ;;
+  esac
+done
+
 # Ask user for roles
 echo "Enter roles, separated by space:" | tee -a $LOGFILE
 read -ra roles
