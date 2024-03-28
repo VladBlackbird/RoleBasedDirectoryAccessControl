@@ -34,6 +34,15 @@ for i in "$@"; do
   esac
 done
 
+# Function to check if the entered permissions are valid
+function isValidPermission() {
+  if [[ $1 =~ ^[0-7]{3}$ ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 # Ask user for roles
 echo "Enter roles, separated by space:" | tee -a $LOGFILE
 read -ra roles
@@ -48,7 +57,12 @@ for role in "${roles[@]}"; do
   echo "Enter permissions for each directory (in the same order), separated by space:" | tee -a $LOGFILE
   read -ra perms
   for index in "${!dirs[@]}"; do
-    dir_perms["${dirs[$index]}"]="${perms[$index]}"
+    if isValidPermission "${perms[$index]}"; then
+      dir_perms["${dirs[$index]}"]="${perms[$index]}"
+    else
+      echo "Invalid permission ${perms[$index]} for directory ${dirs[$index]}." | tee -a $LOGFILE
+      exit 1
+    fi
   done
 done
 
