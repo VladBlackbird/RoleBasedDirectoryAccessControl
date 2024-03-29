@@ -43,6 +43,24 @@ function isValidPermission() {
   fi
 }
 
+# Function to check if the user exists
+function userExists() {
+  if id -u "$1" >/dev/null 2>&1; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+# Function to check if the entered permissions are valid
+function isValidPermission() {
+  if [[ $1 =~ ^[0-7]{3}$ ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 # Ask user for roles
 echo "Enter roles, separated by space:" | tee -a $LOGFILE
 read -ra roles
@@ -142,7 +160,7 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
     echo "Enter users to add to the $role group, separated by space:" | tee -a $LOGFILE
     read -ra users
     for user in "${users[@]}"; do
-      if id -u "$user" >/dev/null 2>&1; then
+      if userExists "$user"; then
         sudo usermod -a -G "$role" "$user" | tee -a $LOGFILE
       else
         echo "User $user does not exist." | tee -a $LOGFILE
@@ -159,7 +177,7 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
     echo "Enter users to remove from the $role group, separated by space:" | tee -a $LOGFILE
     read -ra users
     for user in "${users[@]}"; do
-      if id -u "$user" >/dev/null 2>&1; then
+      if userExists "$user"; then
         sudo gpasswd -d "$user" "$role" | tee -a $LOGFILE
       else
         echo "User $user does not exist." | tee -a $LOGFILE
