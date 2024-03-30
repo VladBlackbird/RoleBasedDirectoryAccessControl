@@ -151,21 +151,33 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
 fi
 
 # Add feature to allow the user to add users to the groups
+# Add feature to check if the group exists before adding a user to it
+function groupExists() {
+  if getent group "$1" > /dev/null; then
+    return 0
+  else
+    return 1
+  fi
+}
 
-# Ask user if they want to add users to the groups
+# Modify the section where users are added to the groups
 echo "Do you want to add users to the groups? (y/n)" | tee -a $LOGFILE
 read -r answer
 if [[ "$answer" =~ ^[Yy]$ ]] ;then
   for role in "${roles[@]}"; do
-    echo "Enter users to add to the $role group, separated by space:" | tee -a $LOGFILE
-    read -ra users
-    for user in "${users[@]}"; do
-      if userExists "$user"; then
-        sudo usermod -a -G "$role" "$user" | tee -a $LOGFILE
-      else
-        echo "User $user does not exist." | tee -a $LOGFILE
-      fi
-    done
+    if groupExists "$role"; then
+      echo "Enter users to add to the $role group, separated by space:" | tee -a $LOGFILE
+      read -ra users
+      for user in "${users[@]}"; do
+        if userExists "$user"; then
+          sudo usermod -a -G "$role" "$user" | tee -a $LOGFILE
+        else
+          echo "User $user does not exist." | tee -a $LOGFILE
+        fi
+      done
+    else
+      echo "Group $role does not exist." | tee -a $LOGFILE
+    fi
   done
 fi
 
