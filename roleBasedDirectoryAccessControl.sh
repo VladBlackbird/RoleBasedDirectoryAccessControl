@@ -197,3 +197,25 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
     done
   done
 fi
+
+# Add feature to create new users and add them to the groups
+echo "Do you want to create new users and add them to the groups? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  for role in "${roles[@]}"; do
+    if groupExists "$role"; then
+      echo "Enter new users to create and add to the $role group, separated by space:" | tee -a $LOGFILE
+      read -ra users
+      for user in "${users[@]}"; do
+        if ! userExists "$user"; then
+          sudo useradd "$user" | tee -a $LOGFILE
+          sudo usermod -a -G "$role" "$user" | tee -a $LOGFILE
+        else
+          echo "User $user already exists." | tee -a $LOGFILE
+        fi
+      done
+    else
+      echo "Group $role does not exist." | tee -a $LOGFILE
+    fi
+  done
+fi
