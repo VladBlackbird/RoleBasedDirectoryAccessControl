@@ -129,6 +129,8 @@ for role in "${!role_dirs[@]}"; do
     if [ -d "$dir" ]; then
       sudo chown :"$role" "$dir" | tee -a $LOGFILE
       sudo chmod "${dir_perms[$dir]}" "$dir" | tee -a $LOGFILE
+    else
+      echo "Directory $dir does not exist." | tee -a $LOGFILE
     fi
   done
 done
