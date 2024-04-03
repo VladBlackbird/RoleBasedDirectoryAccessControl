@@ -200,6 +200,21 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
   done
 fi
 
+# Ask user if they want to delete any users
+echo "Do you want to delete any users? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  echo "Enter users to delete, separated by space:" | tee -a $LOGFILE
+  read -ra users
+  for user in "${users[@]}"; do
+    if userExists "$user"; then
+      sudo userdel "$user" | tee -a $LOGFILE
+    else
+      echo "User $user does not exist." | tee -a $LOGFILE
+    fi
+  done
+fi
+
 # Add feature to create new users and add them to the groups
 echo "Do you want to create new users and add them to the groups? (y/n)" | tee -a $LOGFILE
 read -r answer
