@@ -152,6 +152,27 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
   done
 fi
 
+# Ask user if they want to change ownership of any directories
+echo "Do you want to change ownership of any directories? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  echo "Enter directories to change ownership, separated by space:" | tee -a $LOGFILE
+  read -ra dirs
+  for dir in "${dirs[@]}"; do
+    if [ -d "$dir" ]; then
+      echo "Enter new owner for $dir:" | tee -a $LOGFILE
+      read -r owner
+      if userExists "$owner"; then
+        sudo chown "$owner" "$dir" | tee -a $LOGFILE
+      else
+        echo "User $owner does not exist." | tee -a $LOGFILE
+      fi
+    else
+      echo "Directory $dir does not exist." | tee -a $LOGFILE
+    fi
+  done
+fi
+
 # Add feature to allow the user to add users to the groups
 # Add feature to check if the group exists before adding a user to it
 function groupExists() {
