@@ -173,6 +173,27 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
   done
 fi
 
+# Ask user if they want to change group of any directories
+echo "Do you want to change group of any directories? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  echo "Enter directories to change group, separated by space:" | tee -a $LOGFILE
+  read -ra dirs
+  for dir in "${dirs[@]}"; do
+    if [ -d "$dir" ]; then
+      echo "Enter new group for $dir:" | tee -a $LOGFILE
+      read -r group
+      if groupExists "$group"; then
+        sudo chgrp "$group" "$dir" | tee -a $LOGFILE
+      else
+        echo "Group $group does not exist." | tee -a $LOGFILE
+      fi
+    else
+      echo "Directory $dir does not exist." | tee -a $LOGFILE
+    fi
+  done
+fi
+
 # Add feature to allow the user to add users to the groups
 # Add feature to check if the group exists before adding a user to it
 function groupExists() {
