@@ -100,6 +100,19 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
   done
 fi
 
+# Function to check if a directory is empty
+function isDirEmpty() {
+  if [ -d "$1" ]; then
+    if [ "$(ls -A $1)" ]; then
+      return 1
+    else
+      return 0
+    fi
+  else
+    return 1
+  fi
+}
+
 # Ask user if they want to delete any directories
 echo "Do you want to delete any directories? (y/n)" | tee -a $LOGFILE
 read -r answer
@@ -108,7 +121,11 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
   read -ra dirs
   for dir in "${dirs[@]}"; do
     if [ -d "$dir" ]; then
-      sudo rm -r "$dir" | tee -a $LOGFILE
+      if isDirEmpty "$dir"; then
+        sudo rm -r "$dir" | tee -a $LOGFILE
+      else
+        echo "Directory $dir is not empty. Please remove the files before deleting the directory." | tee -a $LOGFILE
+      fi
     else
       echo "Directory $dir does not exist." | tee -a $LOGFILE
     fi
