@@ -152,7 +152,7 @@ for role in "${!role_dirs[@]}"; do
   done
 done
 
-# Ask user if they want to modify permissions of any directories
+# Check if the directory exists before changing permissions
 echo "Do you want to modify permissions of any directories? (y/n)" | tee -a $LOGFILE
 read -r answer
 if [[ "$answer" =~ ^[Yy]$ ]] ;then
@@ -169,7 +169,7 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
   done
 fi
 
-# Ask user if they want to change ownership of any directories
+# Check if the directory exists before changing ownership
 echo "Do you want to change ownership of any directories? (y/n)" | tee -a $LOGFILE
 read -r answer
 if [[ "$answer" =~ ^[Yy]$ ]] ;then
