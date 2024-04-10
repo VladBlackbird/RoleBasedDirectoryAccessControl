@@ -295,3 +295,20 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
     fi
   done
 fi
+
+# Ask user if they want to change password of any users
+echo "Do you want to change password of any users? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  echo "Enter users to change password, separated by space:" | tee -a $LOGFILE
+  read -ra users
+  for user in "${users[@]}"; do
+    if userExists "$user"; then
+      echo "Enter new password for $user:" | tee -a $LOGFILE
+      read -s password
+      echo "$password" | sudo passwd --stdin "$user" | tee -a $LOGFILE
+    else
+      echo "User $user does not exist." | tee -a $LOGFILE
+    fi
+  done
+fi
