@@ -312,3 +312,24 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
     fi
   done
 fi
+
+# Ask user if they want to change shell of any users
+echo "Do you want to change shell of any users? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  echo "Enter users to change shell, separated by space:" | tee -a $LOGFILE
+  read -ra users
+  for user in "${users[@]}"; do
+    if userExists "$user"; then
+      echo "Enter new shell for $user (e.g. /bin/bash):" | tee -a $LOGFILE
+      read -r shell
+      if [ -x "$shell" ]; then
+        sudo chsh -s "$shell" "$user" | tee -a $LOGFILE
+      else
+        echo "Shell $shell does not exist or is not executable." | tee -a $LOGFILE
+      fi
+    else
+      echo "User $user does not exist." | tee -a $LOGFILE
+    fi
+  done
+fi
