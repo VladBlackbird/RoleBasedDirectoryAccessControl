@@ -333,3 +333,17 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
     fi
   done
 fi
+
+# Add feature to list all users in a group
+echo "Do you want to list all users in a group? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  echo "Enter the group name:" | tee -a $LOGFILE
+  read -r group
+  if groupExists "$group"; then
+    echo "Users in the $group group:" | tee -a $LOGFILE
+    grep "^$group:" /etc/group | cut -d: -f4 | tee -a $LOGFILE
+  else
+    echo "Group $group does not exist." | tee -a $LOGFILE
+  fi
+fi
