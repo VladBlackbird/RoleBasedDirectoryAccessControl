@@ -152,6 +152,15 @@ for role in "${!role_dirs[@]}"; do
   done
 done
 
+# Function to check if a directory is writable by a user
+function isDirWritable() {
+  if [ -w "$1" ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 # Check if the directory exists before changing permissions
 echo "Do you want to modify permissions of any directories? (y/n)" | tee -a $LOGFILE
 read -r answer
@@ -160,9 +169,13 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
   read -ra dirs
   for dir in "${dirs[@]}"; do
     if [ -d "$dir" ]; then
-      echo "Enter new permissions for $dir (e.g. 770):" | tee -a $LOGFILE
-      read -r perms
-      sudo chmod "$perms" "$dir" | tee -a $LOGFILE
+      if isDirWritable "$dir"; then
+        echo "Enter new permissions for $dir (e.g. 770):" | tee -a $LOGFILE
+        read -r perms
+        sudo chmod "$perms" "$dir" | tee -a $LOGFILE
+      else
+        echo "Directory $dir is not writable." | tee -a $LOGFILE
+      fi
     else
       echo "Directory $dir does not exist." | tee -a $LOGFILE
     fi
