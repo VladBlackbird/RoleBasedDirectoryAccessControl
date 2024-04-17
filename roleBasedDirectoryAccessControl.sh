@@ -360,3 +360,35 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
     echo "Group $group does not exist." | tee -a $LOGFILE
   fi
 fi
+
+# Function to check if a user is in a specific group
+function isUserInGroup() {
+  if id -nG "$1" | grep -qw "$2"; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+# Ask user if they want to check if a user is in a specific group
+echo "Do you want to check if a user is in a specific group? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  echo "Enter the username:" | tee -a $LOGFILE
+  read -r user
+  echo "Enter the group name:" | tee -a $LOGFILE
+  read -r group
+  if userExists "$user"; then
+    if groupExists "$group"; then
+      if isUserInGroup "$user" "$group"; then
+        echo "User $user is in the $group group." | tee -a $LOGFILE
+      else
+        echo "User $user is not in the $group group." | tee -a $LOGFILE
+      fi
+    else
+      echo "Group $group does not exist." | tee -a $LOGFILE
+    fi
+  else
+    echo "User $user does not exist." | tee -a $LOGFILE
+  fi
+fi
