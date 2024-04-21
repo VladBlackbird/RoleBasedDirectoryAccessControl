@@ -392,3 +392,29 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
     echo "User $user does not exist." | tee -a $LOGFILE
   fi
 fi
+
+# Function to check if a user is locked
+function isUserLocked() {
+  if sudo passwd -S "$1" | grep -q "L"; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+# Ask user if they want to check if a user is locked
+echo "Do you want to check if a user is locked? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  echo "Enter the username:" | tee -a $LOGFILE
+  read -r user
+  if userExists "$user"; then
+    if isUserLocked "$user"; then
+      echo "User $user is locked." | tee -a $LOGFILE
+    else
+      echo "User $user is not locked." | tee -a $LOGFILE
+    fi
+  else
+    echo "User $user does not exist." | tee -a $LOGFILE
+  fi
+fi
