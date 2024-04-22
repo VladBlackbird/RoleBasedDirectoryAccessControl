@@ -418,3 +418,28 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
     echo "User $user does not exist." | tee -a $LOGFILE
   fi
 fi
+
+# Function to check if a user's password is about to expire or has already expired
+function isPasswordExpiring() {
+  local expiry_date=$(sudo chage -l "$1" | grep "Password expires" | cut -d: -f2)
+  if [[ "$expiry_date" == " never" ]]; then
+    echo "Password for user $1 never expires." | tee -a $LOGFILE
+  elif [[ "$expiry_date" < $(date +"%b %d, %Y") ]]; then
+    echo "Password for user $1 has already expired." | tee -a $LOGFILE
+  else
+    echo "Password for user $1 expires on $expiry_date." | tee -a $LOGFILE
+  fi
+}
+
+# Ask user if they want to check if a user's password is about to expire or has already expired
+echo "Do you want to check if a user's password is about to expire or has already expired? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  echo "Enter the username:" | tee -a $LOGFILE
+  read -r user
+  if userExists "$user"; then
+    isPasswordExpiring "$user"
+  else
+    echo "User $user does not exist." | tee -a $LOGFILE
+  fi
+fi
