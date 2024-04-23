@@ -443,3 +443,22 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
     echo "User $user does not exist." | tee -a $LOGFILE
   fi
 fi
+
+# Function to list all groups a user belongs to
+function listUserGroups() {
+  if id -u "$1" > /dev/null 2>&1; then
+    echo "Groups for user $1:" | tee -a $LOGFILE
+    id -nG "$1" | tee -a $LOGFILE
+  else
+    echo "User $1 does not exist." | tee -a $LOGFILE
+  fi
+}
+
+# Ask user if they want to list all groups a user belongs to
+echo "Do you want to list all groups a user belongs to? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  echo "Enter the username:" | tee -a $LOGFILE
+  read -r user
+  listUserGroups "$user"
+fi
