@@ -462,3 +462,16 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
   read -r user
   listUserGroups "$user"
 fi
+
+# Function to list all users in the system
+function listAllUsers() {
+  echo "All users in the system:" | tee -a $LOGFILE
+  cut -d: -f1 /etc/passwd | tee -a $LOGFILE
+}
+
+# Ask user if they want to list all users in the system
+echo "Do you want to list all users in the system? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  listAllUsers
+fi
