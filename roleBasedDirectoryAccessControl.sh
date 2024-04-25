@@ -475,3 +475,16 @@ read -r answer
 if [[ "$answer" =~ ^[Yy]$ ]] ;then
   listAllUsers
 fi
+
+# Function to list all groups in the system
+function listAllGroups() {
+  echo "All groups in the system:" | tee -a $LOGFILE
+  cut -d: -f1 /etc/group | tee -a $LOGFILE
+}
+
+# Ask user if they want to list all groups in the system
+echo "Do you want to list all groups in the system? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  listAllGroups
+fi
