@@ -488,3 +488,28 @@ read -r answer
 if [[ "$answer" =~ ^[Yy]$ ]] ;then
   listAllGroups
 fi
+
+# Function to check if a user's account is active
+function isUserActive() {
+  local expiry_date=$(sudo chage -l "$1" | grep "Account expires" | cut -d: -f2)
+  if [[ "$expiry_date" == " never" ]]; then
+    echo "Account for user $1 never expires." | tee -a $LOGFILE
+  elif [[ "$expiry_date" < $(date +"%b %d, %Y") ]]; then
+    echo "Account for user $1 has already expired." | tee -a $LOGFILE
+  else
+    echo "Account for user $1 expires on $expiry_date." | tee -a $LOGFILE
+  fi
+}
+
+# Ask user if they want to check if a user's account is active
+echo "Do you want to check if a user's account is active? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  echo "Enter the username:" | tee -a $LOGFILE
+  read -r user
+  if userExists "$user"; then
+    isUserActive "$user"
+  else
+    echo "User $user does not exist." | tee -a $LOGFILE
+  fi
+fi
