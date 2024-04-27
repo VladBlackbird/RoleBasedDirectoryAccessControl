@@ -513,3 +513,29 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
     echo "User $user does not exist." | tee -a $LOGFILE
   fi
 fi
+# Function to check if a user's home directory exists and is accessible
+function isUserHomeAccessible() {
+  local home_dir=$(getent passwd "$1" | cut -d: -f6)
+  if [ -d "$home_dir" ]; then
+    if [ -r "$home_dir" ]; then
+      echo "Home directory for user $1 exists and is readable." | tee -a $LOGFILE
+    else
+      echo "Home directory for user $1 exists but is not readable." | tee -a $LOGFILE
+    fi
+  else
+    echo "Home directory for user $1 does not exist." | tee -a $LOGFILE
+  fi
+}
+
+# Ask user if they want to check if a user's home directory exists and is accessible
+echo "Do you want to check if a user's home directory exists and is accessible? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  echo "Enter the username:" | tee -a $LOGFILE
+  read -r user
+  if userExists "$user"; then
+    isUserHomeAccessible "$user"
+  else
+    echo "User $user does not exist." | tee -a $LOGFILE
+  fi
+fi
