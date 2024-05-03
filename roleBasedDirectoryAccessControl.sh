@@ -539,3 +539,26 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
     echo "User $user does not exist." | tee -a $LOGFILE
   fi
 fi
+
+# Function to check if a user's shell is valid
+function isUserShellValid() {
+  local user_shell=$(getent passwd "$1" | cut -d: -f7)
+  if grep -Fxq "$user_shell" /etc/shells; then
+    echo "Shell for user $1 is valid." | tee -a $LOGFILE
+  else
+    echo "Shell for user $1 is not valid." | tee -a $LOGFILE
+  fi
+}
+
+# Ask user if they want to check if a user's shell is valid
+echo "Do you want to check if a user's shell is valid? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  echo "Enter the username:" | tee -a $LOGFILE
+  read -r user
+  if userExists "$user"; then
+    isUserShellValid "$user"
+  else
+    echo "User $user does not exist." | tee -a $LOGFILE
+  fi
+fi
