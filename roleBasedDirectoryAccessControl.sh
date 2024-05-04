@@ -562,3 +562,26 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
     echo "User $user does not exist." | tee -a $LOGFILE
   fi
 fi
+
+# Function to check if a user's password is locked
+function isUserPasswordLocked() {
+  local status=$(sudo passwd -S "$1" | awk '{print $2}')
+  if [[ "$status" == "L" ]]; then
+    echo "Password for user $1 is locked." | tee -a $LOGFILE
+  else
+    echo "Password for user $1 is not locked." | tee -a $LOGFILE
+  fi
+}
+
+# Ask user if they want to check if a user's password is locked
+echo "Do you want to check if a user's password is locked? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  echo "Enter the username:" | tee -a $LOGFILE
+  read -r user
+  if userExists "$user"; then
+    isUserPasswordLocked "$user"
+  else
+    echo "User $user does not exist." | tee -a $LOGFILE
+  fi
+fi
