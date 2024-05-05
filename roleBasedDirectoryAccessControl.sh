@@ -585,3 +585,36 @@ if [[ "$answer" =~ ^[Yy]$ ]] ;then
     echo "User $user does not exist." | tee -a $LOGFILE
   fi
 fi
+
+# Function to lock a user account
+function lockUserAccount() {
+  sudo passwd -l "$1" | tee -a $LOGFILE
+}
+
+# Function to unlock a user account
+function unlockUserAccount() {
+  sudo passwd -u "$1" | tee -a $LOGFILE
+}
+
+# Ask user if they want to lock or unlock any user accounts
+echo "Do you want to lock or unlock any user accounts? (y/n)" | tee -a $LOGFILE
+read -r answer
+if [[ "$answer" =~ ^[Yy]$ ]] ;then
+  echo "Enter the usernames, separated by space:" | tee -a $LOGFILE
+  read -ra users
+  echo "Do you want to lock or unlock these user accounts? (lock/unlock)" | tee -a $LOGFILE
+  read -r action
+  for user in "${users[@]}"; do
+    if userExists "$user"; then
+      if [[ "$action" == "lock" ]]; then
+        lockUserAccount "$user"
+      elif [[ "$action" == "unlock" ]]; then
+        unlockUserAccount "$user"
+      else
+        echo "Invalid action. Please enter 'lock' or 'unlock'." | tee -a $LOGFILE
+      fi
+    else
+      echo "User $user does not exist." | tee -a $LOGFILE
+    fi
+  done
+fi
